@@ -5,6 +5,7 @@
 #include "mock_account.h"
 
 using ::testing::Return;
+using ::testing::Throw;
 
 TEST(TransactionTest, FeeDefault) {
     Transaction t;
@@ -48,4 +49,25 @@ TEST(TransactionTest, MakeSuccessful) {
     EXPECT_TRUE(result);
     EXPECT_EQ(from.GetBalance(), 890);
     EXPECT_EQ(to.GetBalance(), 600);
+}
+
+TEST(TransactionTest, MockGetBalanceReturnsExpected) {
+    MockAccount mock(1, 500);
+    EXPECT_CALL(mock, GetBalance())
+        .WillOnce(Return(500));
+    EXPECT_EQ(mock.GetBalance(), 500);
+}
+
+TEST(TransactionTest, MockLockAndUnlock) {
+    MockAccount mock(1, 1000);
+    EXPECT_CALL(mock, Lock()).Times(1);
+    EXPECT_CALL(mock, Unlock()).Times(1);
+    mock.Lock();
+    mock.Unlock();
+}
+
+TEST(TransactionTest, MockChangeBalance) {
+    MockAccount mock(1, 1000);
+    EXPECT_CALL(mock, ChangeBalance(100)).Times(1);
+    mock.ChangeBalance(100);
 }
